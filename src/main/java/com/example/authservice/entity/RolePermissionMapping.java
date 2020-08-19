@@ -12,16 +12,16 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @NoArgsConstructor
 @Data
-@Table(value = "permission_roles__role_permissions")
+@Table(value = "role_permission_mapping")
 public class RolePermissionMapping {
 
     @Id
     private Long id;
 
-    @Column("role_permissions")
+    @Column("role_id")
     private Long roleId;
 
-    @Column("permission_roles")
+    @Column("permission_id")
     private Long permissionId;
 
     public RolePermissionMapping(Long roleId, Long permissionId){

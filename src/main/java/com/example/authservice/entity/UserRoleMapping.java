@@ -13,16 +13,16 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @NoArgsConstructor
 @Data
-@Table(value = "role_users__user_roles")
+@Table(value = "user_role_mapping")
 public class UserRoleMapping {
 
     @Id
     private Long id;
 
-    @Column("user_roles")
+    @Column("user_id")
     private Long userId;
 
-    @Column("role_users")
+    @Column("role_id")
     private Long roleId;
 
     public UserRoleMapping(Long userId, Long roleId){
