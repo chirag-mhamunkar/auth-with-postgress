@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @Data
-@Table(value = "permission")
+@Table(value = "auth_permission")
 public class Permission {
 
     @Id
@@ -22,7 +23,10 @@ public class Permission {
     private String name;
     private boolean active;
 
+    @Column("createdAt")
     private LocalDateTime createdAt;
+
+    @Column("updatedAt")
     private LocalDateTime updatedAt;
 
     public Permission(String key, String name, boolean active){
