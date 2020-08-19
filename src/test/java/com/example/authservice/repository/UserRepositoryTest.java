@@ -102,5 +102,5 @@ public class UserRepositoryTest {
         StepVerifier.create(userRepository.findByUserIdAndClientAndTenant(u.getUserId(), u.getClient(), "random"))
                 .verifyComplete();
     }
-    
+
 }
