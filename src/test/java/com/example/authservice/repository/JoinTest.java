@@ -46,8 +46,14 @@ public class JoinTest {
         rolePermissionMappingRepository.save(new RolePermissionMapping(role.getId(), permission.getId())).block();
         userRoleMappingRepository.save(new UserRoleMapping(user.getId(), role.getId())).block();
 
-        StepVerifier.create(userRepository.findFullUser(user.getId()))
-                .assertNext(dbUser -> assertEquals(user, dbUser))
+        StepVerifier.create(userRepository.getUser(user.getId()))
+                .assertNext(authUser -> {
+                    assertEquals(user.getId(), authUser.getId());
+                    assertEquals(1, authUser.getRoles().size());
+                    assertEquals(1, authUser.getRoles().get(0).getPermissions().size());
+                    log.info("{}", authUser);
+
+                })
                 .verifyComplete();
     }
 }

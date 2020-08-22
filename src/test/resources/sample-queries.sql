@@ -55,6 +55,34 @@ JOIN role_permission_mapping rpm ON r.id = rpm.role_id
 JOIN auth_permission p ON p.id = rpm.permission_id
 WHERE u.id = 1;
 
+--JOIN with selected fields
+SELECT
+u.id as user_id,
+u.client as user_client,
+u.userid as user_partner_id,
+u.tenant as user_tenant,
+u.createdat as user_created_at,
+u.updatedat as user_updated_at,
+r.id as role_id,
+r.key as role_key,
+r.name as role_name,
+r.tenant as role_tenant,
+r.active as role_active,
+r.createdat as role_created_at,
+r.updatedat as role_updated_at,
+p.id as permission_id,
+p.key as permission_key,
+p.name as permission_name,
+p.active as permission_active,
+p.createdat as permission_created_at,
+p.updatedat as permission_updated_at
+FROM auth_user u
+JOIN user_role_mapping urm ON u.id = urm.user_id
+JOIN auth_role r ON r.id = urm.role_id
+JOIN role_permission_mapping rpm ON r.id = rpm.role_id
+JOIN auth_permission p ON p.id = rpm.permission_id
+WHERE u.id = 1;
+
 
 
 
