@@ -11,6 +11,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
@@ -75,6 +76,15 @@ public class RoleRepositoryTest {
                     assertEquals(2, dbRoles.size());
                 })
                 .verifyComplete();
+    }
+
+    @Test
+    public void uniqueTest(){
+        roleRepository.save(RoleDummy.create()).block();
+        StepVerifier.create(roleRepository.save(RoleDummy.create()))
+                .expectError(DataIntegrityViolationException.class)
+                .verify()
+        ;
     }
 
 }

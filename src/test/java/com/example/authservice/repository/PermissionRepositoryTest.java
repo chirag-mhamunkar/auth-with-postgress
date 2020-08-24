@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import reactor.test.StepVerifier;
 
 import java.util.Arrays;
@@ -79,5 +80,14 @@ public class PermissionRepositoryTest {
         StepVerifier.create(permissionRepository.findByKeyIn(Arrays.asList("TAB_CUSTOMER_READ", "ADMIN_PERMISSION", "TEST")).collectList())
                 .assertNext(dbPermissions -> assertEquals(2, dbPermissions.size()))
                 .verifyComplete();
+    }
+
+    @Test
+    public void uniqueTest(){
+        Permission pm = new Permission("PERMISSION_KEY", "PERMISSION_NAME", true);
+        permissionRepository.save(pm).block();
+        StepVerifier.create(permissionRepository.save(new Permission("PERMISSION_KEY", "PERMISSION_NAME", true)))
+                .expectError(DataIntegrityViolationException.class)
+                .verify();
     }
 }
