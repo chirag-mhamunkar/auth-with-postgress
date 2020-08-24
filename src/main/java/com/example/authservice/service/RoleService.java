@@ -63,4 +63,8 @@ public class RoleService {
                     return roleRepository.saveAll(roles);
                 });
     }
+
+    public Mono<AuthRole> findFullRoleById(long id) {
+        return roleRepository.getRole(id);
+    }
 }

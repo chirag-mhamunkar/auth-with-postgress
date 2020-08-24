@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -22,6 +19,11 @@ public class RoleController extends WebExceptionHandler {
 
     @Autowired
     private RoleService roleService;
+
+    @GetMapping("/{id}")
+    Mono<AuthRole> findById(@PathVariable("id") long id){
+        return roleService.findFullRoleById(id);
+    }
 
     @PostMapping
     public Mono<AuthRole> saveRole(@RequestBody RoleRequestDTO rq){
