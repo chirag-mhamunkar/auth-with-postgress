@@ -5,7 +5,6 @@ import com.example.authservice.model.AuthPermission;
 import com.example.authservice.model.AuthRole;
 import com.example.authservice.model.AuthUser;
 import io.r2dbc.spi.Row;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +20,16 @@ import java.util.stream.Collectors;
 
 @Repository
 public class CustomUserRepositoryImpl implements CustomUserRepository{
+
+    private static final String JOIN_USER_ROLE_PERMISSION_QUERY = "SELECT " +
+            "u.id as user_id, u.client as user_client, u.userid as user_partner_id, u.tenant as user_tenant, u.createdat as user_created_at, u.updatedat as user_updated_at" +
+            ", r.id as role_id, r.key as role_key, r.name as role_name, r.tenant as role_tenant, r.active as role_active, r.createdat as role_created_at, r.updatedat as role_updated_at" +
+            ", p.id as permission_id, p.key as permission_key, p.name as permission_name, p.active as permission_active, p.createdat as permission_created_at, p.updatedat as permission_updated_at" +
+            " FROM auth_user u JOIN user_role_mapping urm ON u.id = urm.user_id" +
+            " JOIN auth_role r ON r.id = urm.role_id" +
+            " JOIN role_permission_mapping rpm ON r.id = rpm.role_id" +
+            " JOIN auth_permission p ON p.id = rpm.permission_id" +
+            " WHERE u.id = :id";
 
     @Autowired
     private DatabaseClient databaseClient;
@@ -40,18 +48,9 @@ public class CustomUserRepositoryImpl implements CustomUserRepository{
 
     @Override
     public Mono<AuthUser> getUser(long id) {
-        String joinQuery = "SELECT " +
-                "u.id as user_id, u.client as user_client, u.userid as user_partner_id, u.tenant as user_tenant, u.createdat as user_created_at, u.updatedat as user_updated_at" +
-                ", r.id as role_id, r.key as role_key, r.name as role_name, r.tenant as role_tenant, r.active as role_active, r.createdat as role_created_at, r.updatedat as role_updated_at" +
-                ", p.id as permission_id, p.key as permission_key, p.name as permission_name, p.active as permission_active, p.createdat as permission_created_at, p.updatedat as permission_updated_at" +
-                " FROM auth_user u JOIN user_role_mapping urm ON u.id = urm.user_id" +
-                " JOIN auth_role r ON r.id = urm.role_id" +
-                " JOIN role_permission_mapping rpm ON r.id = rpm.role_id" +
-                " JOIN auth_permission p ON p.id = rpm.permission_id" +
-                " WHERE u.id = :id";
 
         AtomicReference<AuthUser> uar = new AtomicReference<>();
-        return databaseClient.execute(joinQuery)
+        return databaseClient.execute(JOIN_USER_ROLE_PERMISSION_QUERY)
                 .bind("id", id)
                 .map((row, o) -> AuthUserJoinPlain.get(row))
                 .all()
