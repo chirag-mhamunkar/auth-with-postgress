@@ -12,4 +12,10 @@ public class WebExceptionHandler {
     public Mono<String> keysFound(KeysFoundException ex){
         return Mono.just(ex.getMessage());
     }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {InvalidPermissionKeysException.class})
+    public Mono<String> inValidPermissionKey(InvalidPermissionKeysException ex){
+        return Mono.just(ex.getMessage());
+    }
 }

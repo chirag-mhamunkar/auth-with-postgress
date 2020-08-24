@@ -27,8 +27,17 @@ public class PermissionService {
                 .flatMapMany(dbPermissions -> {
                     if(!dbPermissions.isEmpty())
                         return Mono.error(new PermissionKeysFoundException(dbPermissions.stream().map(Permission::getKey).collect(Collectors.toList())));
+                    permissions.forEach(p -> p.setId(null)); //just to ensure we insert fresh entry
                     return permissionRepository.saveAll(permissions);
                 })
                 ;
+    }
+
+    public Flux<Permission> findByKeys(List<String> keys){
+        return permissionRepository.findByKeyIn(keys);
+    }
+
+    public Flux<Permission> findAll() {
+        return permissionRepository.findAll();
     }
 }

@@ -9,10 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -55,5 +52,10 @@ public class PermissionController extends WebExceptionHandler {
         //TODO check for duplicate KEYS in request
         List<Permission> permissions = rq.getPermissions().stream().map(PermissionDTO::toEntity).collect(Collectors.toList());
         return permissionService.saveAll(permissions);
+    }
+
+    @GetMapping
+    public Flux<Permission> fetchAll(){
+        return permissionService.findAll();
     }
 }

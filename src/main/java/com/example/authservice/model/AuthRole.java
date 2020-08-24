@@ -17,8 +17,16 @@ import java.util.Objects;
 public class AuthRole extends Role {
     private List<AuthPermission> permissions;
 
+    public AuthRole(String key, String name, String tenant, boolean active){
+        super(key, name, tenant, active);
+    }
+
     public void addPermission(AuthPermission pm){
         if(Objects.isNull(permissions)) permissions = new ArrayList<>();
         permissions.add(pm);
+    }
+
+    public Role toEntity(){
+        return new Role(getKey(), getName(), getTenant(), isActive());
     }
 }
