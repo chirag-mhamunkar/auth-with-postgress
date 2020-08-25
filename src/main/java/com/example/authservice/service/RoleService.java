@@ -67,4 +67,8 @@ public class RoleService {
     public Mono<AuthRole> findFullRoleById(long id) {
         return roleRepository.getRole(id);
     }
+
+    public Flux<Role> findByRoleKeys(List<String> roleKeys) {
+        return roleRepository.findByKeyIn(roleKeys);
+    }
 }
