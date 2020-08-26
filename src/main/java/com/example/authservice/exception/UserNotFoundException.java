@@ -9,7 +9,8 @@ public class UserNotFoundException extends Exception{
     private AuthUser authUser;
 
     public UserNotFoundException(AuthUser authUser){
-        super("User not found: " + authUser);
+        super("User not found for: " + authUser);
         this.authUser = authUser;
     }
+
 }

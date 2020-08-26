@@ -13,8 +13,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -32,34 +30,40 @@ public class UserService {
 
         //if we create unique index on these three attrs then we can directly insert entry
         // and catch exception if entry already exists
-        return userRepository.findByUserIdAndClientAndTenant(au.getUserId(), au.getClient(), au.getTenant())
-                .defaultIfEmpty(new AuthUser())
-                .flatMap(user -> {
-                    if(Objects.nonNull(user.getId())) //found in DB
-                        return Mono.just(new AuthUser(user));
-                    return userRepository.save(au.toEntity())
-                            .map(AuthUser::new);
-                });
+        return findUser(au)
+                .switchIfEmpty(userRepository.save(au.toEntity()).map(AuthUser::new))
+                .map(dbUser -> new AuthUser(dbUser));
     }
 
-    /*public Flux<UserRoleMapping> assignRolesToUser(AuthUser authUser, List<String> roleKeys){
-        return findUser(authUser)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(authUser)))
-                .flatMap(dbUser -> )
-    }*/
+    public Flux<UserRoleMapping> assignRolesToUser(AuthUser au, List<String> roleKeys){
+        return findUser(au)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(au)))
+                .flatMapMany(dbUser -> assignRolesToUser(dbUser, roleKeys));
 
-    private Flux<UserRoleMapping> assignRolesToUser(User dbUser, List<String> roleKeys){
+    }
+
+    public Flux<UserRoleMapping> assignRolesToUserId(long id, List<String> roleKeys){
+        return findUser(id)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(AuthUser.from(id))))
+                .flatMapMany(dbUser -> assignRolesToUser(dbUser, roleKeys));
+
+    }
+
+    //Note: This should be private method and NOT public
+    public Flux<UserRoleMapping> assignRolesToUser(User dbUser, List<String> roleKeys){
         return roleService.findByRoleKeys(roleKeys)
+                .switchIfEmpty(Flux.error(new InvalidRoleKeysException(roleKeys)))
+                .map(r -> new UserRoleMapping(dbUser.getId(), r.getId()))
                 .collectList()
-                .flatMapMany(roles -> {
-                    if(roles.isEmpty()) return Mono.error(new InvalidRoleKeysException(roleKeys));
-                    List<UserRoleMapping> userRoleMappings =
-                            roles.stream().map(r -> new UserRoleMapping(r.getId(), dbUser.getId())).collect(Collectors.toList());
-                    return userRoleMappingRepository.saveAll(userRoleMappings);
-                });
+                .flatMapMany(userRoleMappingRepository :: saveAll)
+                ;
     }
 
     private Mono<User> findUser(AuthUser au){
         return userRepository.findByUserIdAndClientAndTenant(au.getUserId(), au.getClient(), au.getTenant());
+    }
+
+    private Mono<User> findUser(long id){
+        return userRepository.findById(id);
     }
 }

@@ -20,11 +20,11 @@ public class User {
     @Id
     private Long id;
 
-    @Column("client")
-    private String client;
-
     @Column("userId")
     private String userId;
+
+    @Column("client")
+    private String client;
 
     @Column("tenant")
     private String tenant;
@@ -36,7 +36,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     public User(String userId, String client, String tenant){
-        this(null,client, userId, tenant, LocalDateTime.now(), LocalDateTime.now());
+        this(null, userId, client, tenant, LocalDateTime.now(), LocalDateTime.now());
     }
 
 }
