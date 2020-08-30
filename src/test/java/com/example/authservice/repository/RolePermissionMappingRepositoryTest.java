@@ -1,9 +1,11 @@
 package com.example.authservice.repository;
 
 import com.example.authservice.configuration.DBConfiguration;
+import com.example.authservice.entity.Permission;
+import com.example.authservice.entity.Role;
 import com.example.authservice.entity.RolePermissionMapping;
+import com.example.authservice.entity.dummy.RoleDummy;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -26,16 +28,18 @@ public class RolePermissionMappingRepositoryTest {
     @Autowired
     private RolePermissionMappingRepository rolePermissionMappingRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
+
     @BeforeEach
     public void init(){
         rolePermissionMappingRepository.deleteAll().block();
+        roleRepository.deleteAll().block();
+        permissionRepository.deleteAll().block();
         log.info("BeforeEach: cleaning everything");
-    }
-
-    @AfterAll
-    public void destroy(){
-        rolePermissionMappingRepository.deleteAll().block();
-        log.info("AfterAll: cleaning everything");
     }
 
     @Test
@@ -46,9 +50,13 @@ public class RolePermissionMappingRepositoryTest {
 
     @Test
     public void findByRoleIdTest(){
-        RolePermissionMapping rolePermissionMapping = new RolePermissionMapping(1l, 1l);
+        Role role = roleRepository.save(RoleDummy.create()).block();
+        Permission permission = permissionRepository.save(new Permission("PERMISSION_KEY", "PERMISSION_NAME", true)).block();
+
+
+        RolePermissionMapping rolePermissionMapping = new RolePermissionMapping(role.getId(), permission.getId());
         rolePermissionMappingRepository.save(rolePermissionMapping).block();
-        StepVerifier.create(rolePermissionMappingRepository.findByRoleId(1l).collectList())
+        StepVerifier.create(rolePermissionMappingRepository.findByRoleId(role.getId()).collectList())
                 .assertNext(list -> {
                     assertEquals(1, list.size());
                     assertEquals(rolePermissionMapping, list.get(0));
@@ -57,12 +65,16 @@ public class RolePermissionMappingRepositoryTest {
     }
 
     @Test
-    public void findByUserIdsTest(){
-        rolePermissionMappingRepository.saveAll(
-                Arrays.asList(new RolePermissionMapping(1l, 1l), new RolePermissionMapping(2l, 2l)
-                )).collectList().block();
-        StepVerifier.create(rolePermissionMappingRepository.findByRoleIdIn(Arrays.asList(1l, 2l)).collectList())
-                .assertNext(list -> assertEquals(2, list.size()))
+    public void findByRoleIdsTest(){
+        Role role = roleRepository.save(RoleDummy.create()).block();
+        Permission permission = permissionRepository.save(new Permission("PERMISSION_KEY", "PERMISSION_NAME", true)).block();
+
+
+        RolePermissionMapping rolePermissionMapping = new RolePermissionMapping(role.getId(), permission.getId());
+        rolePermissionMappingRepository.save(rolePermissionMapping).block();
+
+        StepVerifier.create(rolePermissionMappingRepository.findByRoleIdIn(Arrays.asList(role.getId())).collectList())
+                .assertNext(list -> assertEquals(1, list.size()))
                 .verifyComplete();
     }
 }

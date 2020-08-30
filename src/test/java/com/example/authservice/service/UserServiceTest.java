@@ -45,9 +45,9 @@ public class UserServiceTest {
     public void cleanUp() {
 
         log.info("#########################");
+        userRoleMappingRepository.deleteAll().block();
         userRepository.deleteAll().block();
         roleRepository.deleteAll().block();
-        userRoleMappingRepository.deleteAll().block();
     }
 
     @Test

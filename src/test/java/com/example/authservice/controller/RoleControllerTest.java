@@ -44,9 +44,9 @@ public class RoleControllerTest {
 
     @BeforeEach
     public void init(){
+        rolePermissionMappingRepository.deleteAll().block();
         permissionRepository.deleteAll().block();
         roleRepository.deleteAll().block();
-        rolePermissionMappingRepository.deleteAll().block();
     }
 
     @Test
