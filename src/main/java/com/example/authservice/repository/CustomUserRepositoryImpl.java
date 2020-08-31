@@ -62,7 +62,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository{
     private AuthUser convert(List<AuthUserJoinPlain> authUserJoinPlains){
         if(Objects.isNull(authUserJoinPlains) || authUserJoinPlains.isEmpty()) return null;
 
-        Map<Long, AuthRole> roleMap = authUserJoinPlains.stream().collect(Collectors.toMap(a -> a.roleId, a -> a.toRole()));
+        Map<Long, AuthRole> roleMap = authUserJoinPlains.stream().collect(Collectors.toMap(r -> r.roleId, r -> r.toRole(), (r1, r2) -> r1));
 
         authUserJoinPlains.forEach(a -> roleMap.get(a.roleId).addPermission(a.toPermission()));
 

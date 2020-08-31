@@ -27,16 +27,10 @@ public class PermissionRepositoryTest {
     @Autowired
     private PermissionRepository permissionRepository;
 
+    @AfterAll
     @BeforeEach
     public void init(){
         permissionRepository.deleteAll().block();
-        log.info("BeforeEach: cleaning everything");
-    }
-
-    @AfterAll
-    public void destroy(){
-        permissionRepository.deleteAll().block();
-        log.info("AfterAll: cleaning everything");
     }
 
     @Test

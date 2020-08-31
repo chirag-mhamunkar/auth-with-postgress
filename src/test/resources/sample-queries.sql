@@ -84,6 +84,8 @@ JOIN auth_permission p ON p.id = rpm.permission_id
 WHERE u.id = 1;
 
 
+--query to find duplicate users
+select userid, client, tenant, count(id) from auth_user group by userid, client, tenant having count(id) > 1;
 
 
 

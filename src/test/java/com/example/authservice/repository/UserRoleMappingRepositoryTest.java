@@ -7,6 +7,7 @@ import com.example.authservice.entity.UserRoleMapping;
 import com.example.authservice.entity.dummy.RoleDummy;
 import com.example.authservice.entity.dummy.UserDummy;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,12 +36,12 @@ public class UserRoleMappingRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @AfterAll
     @BeforeEach
     public void init(){
         userRoleMappingRepository.deleteAll().block();
         userRepository.deleteAll().block();
         roleRepository.deleteAll().block();
-        log.info("BeforeEach: cleaning everything");
     }
 
     @Test

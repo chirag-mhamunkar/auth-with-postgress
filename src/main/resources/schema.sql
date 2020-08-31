@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS auth_user (
     updatedAt timestamp default current_timestamp not null
 );
 
-CREATE INDEX idx_auth_user_userid ON auth_user(userId);
+CREATE INDEX if not exists idx_auth_user_userid ON auth_user(userId);
 
 -- ALTER TABLE auth_user ADD COLUMN if not exists old_ref_id VARCHAR(32) unique;
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS user_role_mapping (
     foreign key(role_id) references auth_role(id)
 );
 
-CREATE INDEX idx_user_role_user_id ON user_role_mapping(user_id);
+CREATE INDEX if not exists idx_user_role_user_id ON user_role_mapping(user_id);
 
 
 CREATE TABLE IF NOT EXISTS role_permission_mapping (
@@ -56,6 +56,4 @@ CREATE TABLE IF NOT EXISTS role_permission_mapping (
     foreign key(permission_id) references auth_permission(id)
 );
 
-CREATE INDEX idx_role_permission_role_id ON role_permission_mapping(role_id);
-
-
+CREATE INDEX if not exists idx_role_permission_role_id ON role_permission_mapping(role_id);

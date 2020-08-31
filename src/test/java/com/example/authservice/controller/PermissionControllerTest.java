@@ -34,13 +34,9 @@ public class PermissionControllerTest {
     @Autowired
     private PermissionRepository permissionRepository;
 
+    @AfterAll
     @BeforeEach
     public void beforeEach(){
-        permissionRepository.deleteAll().block();
-    }
-
-    @AfterAll
-    public void afterAll(){
         permissionRepository.deleteAll().block();
     }
 

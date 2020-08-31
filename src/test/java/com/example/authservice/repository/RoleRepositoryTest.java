@@ -28,16 +28,10 @@ public class RoleRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @AfterAll
     @BeforeEach
     public void init(){
         roleRepository.deleteAll().block();
-        log.info("BeforeEach: cleaning everything");
-    }
-
-    @AfterAll
-    public void destroy(){
-        roleRepository.deleteAll().block();
-        log.info("AfterAll: cleaning everything");
     }
 
     @Test

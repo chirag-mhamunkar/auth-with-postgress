@@ -27,16 +27,10 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @AfterAll
     @BeforeEach
     public void init(){
         userRepository.deleteAll().block();
-        log.info("BeforeEach: cleaning everything");
-    }
-
-    @AfterAll
-    public void destroy(){
-        userRepository.deleteAll().block();
-        log.info("AfterAll: cleaning everything");
     }
 
     @Test

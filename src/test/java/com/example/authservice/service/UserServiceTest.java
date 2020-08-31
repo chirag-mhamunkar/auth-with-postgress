@@ -12,6 +12,7 @@ import com.example.authservice.repository.RoleRepository;
 import com.example.authservice.repository.UserRepository;
 import com.example.authservice.repository.UserRoleMappingRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -41,6 +42,7 @@ public class UserServiceTest {
     @Autowired
     private UserRoleMappingRepository userRoleMappingRepository;
 
+    @AfterAll
     @BeforeEach
     public void cleanUp() {
 
